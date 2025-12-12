@@ -1,20 +1,36 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { PLAYERS } from './data';
 import { PlayerData } from './types';
-import { Search, ChevronRight, RefreshCcw, Home, Award, Calendar, AlertCircle, Download, Volume2, VolumeX, Crosshair, Flag, CircleDot, User, Star, TrendingUp, Users, Trophy, X, Scissors, Sparkles, Crown, Hand, Flame, Activity } from 'lucide-react';
+import { Search, ChevronRight, Volume2, VolumeX, Crosshair, Flag, CircleDot, User, Star, TrendingUp, Users, Trophy, X, Crown, Activity, Flame, AlertCircle, Mail, HelpCircle, Check, XCircle, Award, Medal, Banknote } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import html2canvas from 'html2canvas';
 import confetti from 'canvas-confetti';
 
 // --- Assets ---
-// Music removed by request
-const AUDIO_URL = ""; 
+// Background Music
+const AUDIO_URL = "https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"; 
+// Slide Transition Sound (Reliable Google Storage URL - 'Pop' sound)
+const SFX_URL = "https://codeskulptor-demos.commondatastorage.googleapis.com/pang/pop.mp3";
+
+// --- Constants ---
+const FINES_DATA: Record<string, string> = {
+  "Charlie Luke": "£16.50",
+  "Chris Ryan": "£15.00",
+  "Ben Andrews": "£13.00",
+  "Alex Roberts": "£11.00",
+  "Martyn Head": "£10.50",
+  "Oliver Clarke": "£7.00",
+  "Mick Dicken": "£4.50",
+  "Max Chippett": "£4.00",
+  "Ben Roberts": "£4.00",
+  "Shane Looker": "£3.00"
+};
 
 // --- Helpers ---
 const useSquadStats = () => {
   return useMemo(() => {
     let maxApps = 0;
-    let topScorer = PLAYERS[0];
+    let maxGoals = 0;
     let badBoy = PLAYERS[0];
     let mostMoMs = PLAYERS[0];
     let scheduleSource = PLAYERS[0]; // Player with most games to determine correct order
@@ -35,10 +51,13 @@ const useSquadStats = () => {
         maxApps = apps;
         scheduleSource = p; // Use this player's match list as the master schedule
       }
-      if (goals > (topScorer.Stats["M1 Goals"] || 0)) topScorer = p;
+      if (goals > maxGoals) maxGoals = goals;
       if (points > (badBoy.Stats["Card Points"] || 0)) badBoy = p;
       if (moms > (mostMoMs.Stats["Man of the match"] || 0)) mostMoMs = p;
     });
+
+    const topScorers = PLAYERS.filter(p => (p.Stats["M1 Goals"] || 0) === maxGoals);
+    const topScorerNames = topScorers.map(p => p.Name).join(" & ");
 
     // Use the Master Schedule to calculate team stats in correct chronological order
     scheduleSource.Matches.forEach(m => {
@@ -83,11 +102,11 @@ const useSquadStats = () => {
         formGuide.push(result);
     });
 
-    return { maxApps, topScorer, badBoy, mostMoMs, teamRecord, totalGames: scheduleSource.Matches.length, biggestWin, formGuide };
+    return { maxApps, topScorers, maxGoals, topScorerNames, badBoy, mostMoMs, teamRecord, totalGames: scheduleSource.Matches.length, biggestWin, formGuide };
   }, []);
 };
 
-// --- Components ---
+// --- Sub-Components ---
 
 const BackgroundMusic = ({ isPlaying, togglePlay }: { isPlaying: boolean, togglePlay: () => void }) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -125,6 +144,137 @@ const BackgroundMusic = ({ isPlaying, togglePlay }: { isPlaying: boolean, toggle
   );
 };
 
+const QuizSlide = ({ topScorers }: { topScorers: PlayerData[] }) => {
+  // Fixed options as requested: Dudley, Swann, Ben Roberts, Barnardo
+  const optionNames = ["James Dudley", "Richard Swann", "Ben Roberts", "Scott Barnardo"];
+  const options = PLAYERS.filter(p => optionNames.includes(p.Name))
+                         .sort((a, b) => a.Name.localeCompare(b.Name));
+
+  const [found, setFound] = useState<string[]>([]);
+  const [msg, setMsg] = useState<string>("Tap to guess the Top Scorer");
+  const [showStats, setShowStats] = useState(false);
+
+  const isGameComplete = found.length === topScorers.length;
+
+  const handleGuess = (player: PlayerData) => {
+    if (found.includes(player.Name) || isGameComplete) return;
+
+    const isTop = topScorers.some(ts => ts.Name === player.Name);
+
+    if (isTop) {
+      const newFound = [...found, player.Name];
+      setFound(newFound);
+      
+      if (newFound.length === topScorers.length) {
+        setMsg("CORRECT! THE DEADLY DUO!");
+        confetti({
+           particleCount: 200,
+           spread: 100,
+           origin: { y: 0.6 },
+           colors: ['#f97316', '#fbbf24', '#ffffff']
+        });
+        setTimeout(() => setShowStats(true), 1000);
+      } else {
+        setMsg("YES! But it's a TIE... Who is he sharing it with?");
+        confetti({ particleCount: 50, spread: 50, origin: { y: 0.8 } });
+      }
+    } else {
+      setMsg(`Nope! ${player.Name} only has ${player.Stats["M1 Goals"] || 0} goals.`);
+    }
+  };
+
+  return (
+    <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(249,115,22,0.1),transparent_70%)]"></div>
+      
+      <div className="relative z-10 text-center w-full max-w-md mx-auto h-full flex flex-col justify-center">
+        {!showStats ? (
+          <>
+            <motion.div
+               initial={{ y: -20, opacity: 0 }}
+               animate={{ y: 0, opacity: 1 }}
+               className="mb-8"
+            >
+               <div className="inline-block bg-orange-500/20 text-orange-500 px-4 py-1 rounded-full text-xs font-black uppercase tracking-[0.2em] mb-4 border border-orange-500/30">
+                  Trivia Time
+               </div>
+               <h2 className="text-4xl font-black text-white display-font mb-2">GUESS WHO?</h2>
+               <motion.p 
+                 key={msg}
+                 initial={{ opacity: 0, y: 5 }}
+                 animate={{ opacity: 1, y: 0 }}
+                 className="text-neutral-300 text-lg font-bold min-h-[3rem]"
+               >
+                 {msg}
+               </motion.p>
+            </motion.div>
+
+            <div className="grid grid-cols-1 gap-3">
+               {options.map((option, idx) => {
+                  const isFound = found.includes(option.Name);
+                  const isTop = topScorers.some(ts => ts.Name === option.Name);
+                  
+                  let bgClass = "bg-neutral-800 hover:bg-neutral-700";
+                  let borderClass = "border-white/5";
+                  
+                  if (isFound) {
+                     bgClass = "bg-green-600";
+                     borderClass = "border-green-400";
+                  }
+
+                  return (
+                    <motion.button
+                      key={option.Name}
+                      initial={{ x: -20, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ delay: idx * 0.1 }}
+                      onClick={() => handleGuess(option)}
+                      className={`w-full p-4 rounded-xl border ${borderClass} ${bgClass} transition-all duration-300 font-bold text-lg flex justify-between items-center group relative overflow-hidden`}
+                      disabled={isFound}
+                    >
+                       <span className="relative z-10">{option.Name}</span>
+                       {isFound && <Check className="w-5 h-5 text-white relative z-10" />}
+                       {!isFound && <HelpCircle className="w-5 h-5 text-neutral-600 group-hover:text-white transition-colors relative z-10" />}
+                    </motion.button>
+                  );
+               })}
+            </div>
+            {found.length > 0 && !isGameComplete && (
+               <p className="mt-4 text-xs text-neutral-500 uppercase tracking-widest animate-pulse">Select the other top scorer</p>
+            )}
+          </>
+        ) : (
+          <motion.div 
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-neutral-900/90 border border-orange-500/30 rounded-3xl p-6 backdrop-blur-xl"
+          >
+            <div className="flex justify-center mb-4">
+               <Trophy className="w-16 h-16 text-yellow-400 drop-shadow-[0_0_15px_rgba(250,204,21,0.5)]" />
+            </div>
+            <h2 className="text-3xl font-black text-white uppercase display-font mb-1">Joint Winners</h2>
+            <div className="text-orange-500 text-6xl font-black display-font mb-6">{topScorers[0].Stats["M1 Goals"]} Goals</div>
+            
+            <div className="grid grid-cols-2 gap-4">
+              {topScorers.map(p => (
+                 <div key={p.Name} className="bg-black/40 p-3 rounded-xl border border-white/5">
+                    <div className="text-xl font-bold text-white mb-1">{p.Name.split(' ')[1]}</div>
+                    <div className="text-xs text-neutral-400 space-y-1">
+                       <div className="flex justify-between"><span>Apps:</span> <span className="text-white">{p.Stats["M1 Apps."]}</span></div>
+                       <div className="flex justify-between"><span>Open Play:</span> <span className="text-white">{p.Stats["Open Play Goals"] || 0}</span></div>
+                       <div className="flex justify-between"><span>MoM:</span> <span className="text-white">{p.Stats["Man of the match"] || 0}</span></div>
+                    </div>
+                 </div>
+              ))}
+            </div>
+          </motion.div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+
 // 1. Search Screen
 interface SearchScreenProps {
   onSelect: (player: PlayerData) => void;
@@ -139,7 +289,7 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ onSelect, onStartMusic }) =
   );
 
   return (
-    <div className="min-h-[100dvh] bg-neutral-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="h-[100dvh] w-full bg-neutral-950 flex flex-col items-center p-4 md:p-6 relative overflow-hidden">
       {/* Dynamic Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(249,115,22,0.15),transparent_40%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(255,255,255,0.05),transparent_40%)] pointer-events-none" />
@@ -150,18 +300,11 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ onSelect, onStartMusic }) =
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md z-10 flex flex-col h-full justify-center"
+        className="w-full max-w-md z-10 flex flex-col h-full"
       >
-        <div className="mb-8 text-center shrink-0">
-          <motion.div 
-            initial={{ scale: 0.8, rotate: -10 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 200 }}
-            className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-700 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-[0_0_40px_rgba(234,88,12,0.6)] rotate-3 border border-orange-400/30"
-          >
-             <Home className="text-white w-10 h-10" />
-          </motion.div>
-          <h1 className="text-5xl font-black mb-2 text-white display-font tracking-tighter leading-none drop-shadow-xl">
+        {/* Header Section - Shrinks if needed but stays visible */}
+        <div className="mt-4 md:mt-8 mb-6 text-center shrink-0">
+          <h1 className="text-4xl md:text-5xl font-black mb-2 text-white display-font tracking-tighter leading-none drop-shadow-xl">
             DUCHY<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">WRAPPED</span>
           </h1>
           <div className="inline-block mt-2 px-4 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
@@ -169,6 +312,7 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ onSelect, onStartMusic }) =
           </div>
         </div>
 
+        {/* Search Input */}
         <div className="relative mb-4 group shrink-0">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-500 w-5 h-5 group-focus-within:text-orange-500 transition-colors" />
           <input
@@ -180,32 +324,37 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ onSelect, onStartMusic }) =
           />
         </div>
 
-        <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-0">
-          {filteredPlayers.map((player) => (
-            <motion.button
-              key={player["Squad Number"]}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              whileHover={{ scale: 1.02, backgroundColor: 'rgba(249, 115, 22, 0.1)' }}
-              whileTap={{ scale: 0.98 }}
-              onClick={() => {
-                onStartMusic();
-                onSelect(player);
-              }}
-              className="w-full p-3 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center justify-between group transition-colors hover:border-orange-500/40 backdrop-blur-sm"
-            >
-              <div className="flex items-center gap-3">
-                <span className="w-8 h-8 rounded bg-neutral-800 flex items-center justify-center text-xs font-black text-neutral-400 group-hover:bg-orange-500 group-hover:text-black transition-all font-mono">
-                  {player["Squad Number"]}
-                </span>
-                <span className="font-bold text-base text-neutral-200 group-hover:text-white transition-colors text-left">{player.Name}</span>
-              </div>
-              <ChevronRight className="w-4 h-4 text-neutral-600 group-hover:text-orange-500" />
-            </motion.button>
-          ))}
-          {query && filteredPlayers.length === 0 && (
-             <p className="text-neutral-500 text-center py-4">No players found.</p>
-          )}
+        {/* Scrollable Player List */}
+        <div className="flex-1 overflow-y-auto custom-scrollbar pr-1 pb-4 min-h-0 touch-pan-y">
+          <div className="space-y-3">
+            {filteredPlayers.map((player) => (
+              <motion.button
+                key={player["Squad Number"]}
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                whileHover={{ scale: 1.02, backgroundColor: 'rgba(249, 115, 22, 0.1)' }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => {
+                  onStartMusic();
+                  onSelect(player);
+                }}
+                className="w-full p-3 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center justify-between group transition-colors hover:border-orange-500/40 backdrop-blur-sm"
+              >
+                <div className="flex items-center gap-3">
+                  <span className="w-8 h-8 rounded bg-neutral-800 flex items-center justify-center text-xs font-black text-neutral-400 group-hover:bg-orange-500 group-hover:text-black transition-all font-mono">
+                    {player["Squad Number"]}
+                  </span>
+                  <span className="font-bold text-base text-neutral-200 group-hover:text-white transition-colors text-left">{player.Name}</span>
+                </div>
+                <ChevronRight className="w-4 h-4 text-neutral-600 group-hover:text-orange-500" />
+              </motion.button>
+            ))}
+            {query && filteredPlayers.length === 0 && (
+               <p className="text-neutral-500 text-center py-4">No players found.</p>
+            )}
+            {/* Added extra padding at bottom to ensure last item is visible above any browser chrome */}
+            <div className="h-8"></div>
+          </div>
         </div>
       </motion.div>
     </div>
@@ -262,6 +411,10 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
     specialAward = { label: "FASHION ALERT", text: "NICE SKORT", emoji: "👗" };
   } else if (player.Name === "Alex Roberts") {
     specialAward = { label: "MEDICAL ALERT", text: "DEVIL'S HAMSTRING", emoji: "🔥" };
+  } else if (player.Name === "Scott Barnardo") {
+    specialAward = { label: "LIFESTYLE", text: "MOUNTAIN MAN", emoji: "🏔️" };
+  } else if (player.Name === "Richard Swann") {
+    specialAward = { label: "JOB TITLE", text: "POSTMAN PAT", emoji: "📬" };
   }
 
   const downloadCard = async (e: React.MouseEvent) => {
@@ -279,6 +432,13 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
       link.download = `Duchy_HalfSeason_${player.Name.replace(' ', '_')}.png`;
       link.click();
     }
+  };
+
+  const playSfx = () => {
+    // Create new audio instance for overlap support and reliability
+    const audio = new Audio(SFX_URL);
+    audio.volume = 0.5;
+    audio.play().catch(e => console.log('SFX play failed', e));
   };
 
   const slides = [
@@ -555,14 +715,21 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
         );
       }
     },
+
+    // Trivia Slide (Before Goals)
+    {
+      id: 'guess_scorer',
+      render: () => <QuizSlide topScorers={squadStats.topScorers} />
+    },
+
     // Goals Breakdown
     {
       id: 'goals',
       render: () => {
          const hasGoals = totalGoals > 0;
          const hasAssistsOnly = totalGoals === 0 && assists > 0;
-         const isTopScorer = totalGoals >= (squadStats.topScorer.Stats["M1 Goals"] || 0);
-         const diff = (squadStats.topScorer.Stats["M1 Goals"] || 0) - totalGoals;
+         const isTopScorer = squadStats.topScorers.some(p => p.Name === player.Name);
+         const diff = squadStats.maxGoals - totalGoals;
          
          // Visual flourish if has goals or assists
          const showCelebration = hasGoals || hasAssistsOnly;
@@ -579,37 +746,40 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
              )}
 
              <div className="mt-8 relative z-10">
+               <div className="inline-block bg-orange-500/10 text-orange-400 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.2em] mb-4 border border-orange-500/20">
+                  {player.Name}'s Stats
+               </div>
                <h2 className="text-5xl font-black uppercase display-font mb-2 text-white leading-none tracking-tight drop-shadow-lg">
-                  {hasGoals ? <><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">Net</span><br/>Buster</> : hasAssistsOnly ? <><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Play</span><br/>Maker</> : <><span className="text-neutral-700">Goal</span><br/>Shy</>}
+                  {hasGoals ? <><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-yellow-500">Net</span><br/>Buster</> : hasAssistsOnly ? <><span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Play</span><br/>Maker</> : <><span className="text-neutral-600">Oh</span><br/>Dear...</>}
                </h2>
              </div>
 
-             <div className="self-center my-4 relative z-10 w-full flex-1 flex flex-col justify-center">
+             <div className="self-center my-4 relative z-10 w-full flex-1 flex flex-col justify-center items-center">
                {hasGoals ? (
-                 <div className="flex flex-col items-center">
+                 <div className="flex flex-col items-center w-full">
                    {/* Total Goal Count */}
-                   <div className="relative mb-6 transform hover:scale-105 transition-transform duration-300">
+                   <div className="relative mb-6 transform hover:scale-105 transition-transform duration-300 w-full text-center">
                       <motion.div
                          initial={{ scale: 0.5, opacity: 0 }}
                          animate={{ scale: 1, opacity: 1 }}
                          transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                         className="text-9xl md:text-[12rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-b from-orange-400 via-orange-500 to-orange-700 display-font relative z-10 drop-shadow-[0_0_25px_rgba(249,115,22,0.4)]"
+                         className="text-9xl md:text-[12rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-b from-orange-400 via-orange-500 to-orange-700 display-font relative z-10 drop-shadow-[0_0_25px_rgba(249,115,22,0.4)] w-full text-center"
                       >
                           {totalGoals}
                       </motion.div>
-                      <div className="text-center text-white font-bold tracking-[0.3em] text-sm uppercase opacity-90 mt-2">Total Goals</div>
+                      <div className="text-center text-white font-bold tracking-[0.3em] text-lg uppercase opacity-90 mt-2">YOUR SEASON TOTAL</div>
                    </div>
 
                    {/* Context */}
-                   <div className="mb-6 bg-neutral-900/50 px-4 py-2 rounded-lg text-center border border-white/5 backdrop-blur-md">
+                   <div className="mb-6 bg-neutral-900/50 px-4 py-2 rounded-lg text-center border border-white/5 backdrop-blur-md max-w-sm">
                       {isTopScorer ? (
                         <p className="text-yellow-400 font-bold flex items-center gap-2 justify-center">
                            <Trophy className="w-4 h-4" /> You are Top Scorer!
                         </p>
                       ) : (
                         <p className="text-neutral-400 text-xs md:text-sm">
-                           Chasing <span className="text-white font-bold">{squadStats.topScorer.Name}</span> ({squadStats.topScorer.Stats["M1 Goals"]}). <br/>
-                           Only {diff} to go!
+                           Chasing <span className="text-white font-bold">{squadStats.topScorerNames}</span> ({squadStats.maxGoals}). <br/>
+                           Only {diff} more to go!
                         </p>
                       )}
                    </div>
@@ -651,13 +821,13 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                    </div>
                  </div>
                ) : hasAssistsOnly ? (
-                 <div className="flex flex-col items-center">
-                    <div className="relative mb-8 transform hover:scale-105 transition-transform duration-300">
+                 <div className="flex flex-col items-center w-full">
+                    <div className="relative mb-8 transform hover:scale-105 transition-transform duration-300 w-full text-center">
                       <motion.div
                          initial={{ scale: 0.5, opacity: 0 }}
                          animate={{ scale: 1, opacity: 1 }}
                          transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                         className="text-9xl md:text-[12rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-400 via-cyan-500 to-teal-600 display-font relative z-10 drop-shadow-[0_0_25px_rgba(56,189,248,0.4)]"
+                         className="text-9xl md:text-[12rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-400 via-cyan-500 to-teal-600 display-font relative z-10 drop-shadow-[0_0_25px_rgba(56,189,248,0.4)] w-full text-center"
                       >
                           {assists}
                       </motion.div>
@@ -669,12 +839,23 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                     </div>
                  </div>
                ) : (
-                 <div className="text-center opacity-50">
-                    <div className="text-8xl font-black text-neutral-800 display-font">0</div>
-                    <p className="text-neutral-500 mt-4 uppercase tracking-widest font-bold text-sm">
-                       {squadStats.topScorer.Name} has {squadStats.topScorer.Stats["M1 Goals"]}.<br/>
-                       No pressure though.
-                    </p>
+                 <div className="text-center">
+                    <motion.div 
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="text-9xl font-black text-neutral-800 display-font mb-4"
+                    >
+                      0
+                    </motion.div>
+                    <div className="bg-neutral-900/50 p-6 rounded-2xl border border-white/5">
+                      <p className="text-white font-bold text-xl mb-2">Hard luck, mate.</p>
+                      <p className="text-neutral-400 mt-2 text-sm italic">
+                         "It's the taking part that counts... but scoring helps."
+                      </p>
+                      <p className="text-neutral-500 text-xs mt-4 uppercase tracking-widest font-bold">
+                         Target for Part 2: Hit a barn door.
+                      </p>
+                    </div>
                  </div>
                )}
              </div>
@@ -792,7 +973,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                                   Awarded in {totalApps} Games
                               </p>
                           </motion.div>
-                          <p className="mt-2 text-neutral-500 text-xs">(Squad Total: {squadStats.maxApps} games)</p>
+                          <p className="text-neutral-500 text-xs mt-2 uppercase tracking-widest">(Squad Total: {squadStats.maxApps} games)</p>
                       </>
                   ) : (
                       <>
@@ -911,6 +1092,101 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
     },
 
     // --- LATE SPECIAL SLIDES ---
+    
+    // Richard Swann "Postman Pat"
+    ...(player.Name === "Richard Swann" ? [{
+      id: 'postman_pat',
+      render: () => (
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-900 relative overflow-hidden">
+           <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(220,38,38,0.2),transparent_70%)]"></div>
+           
+           <div className="relative z-10 flex flex-col items-center text-center">
+               <motion.div
+                  initial={{ x: -100, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ type: "spring", stiffness: 100 }}
+                  className="mb-8"
+               >
+                  <div className="w-32 h-32 bg-red-600 rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(220,38,38,0.5)] border-4 border-yellow-400">
+                    <Mail className="w-16 h-16 text-yellow-400" />
+                  </div>
+               </motion.div>
+
+               <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3 }}
+               >
+                   <h2 className="text-2xl font-bold text-neutral-400 mb-2">Service Status</h2>
+                   <h1 className="text-5xl md:text-6xl font-black text-white display-font mb-6 leading-tight drop-shadow-lg">
+                       POSTMAN<br/><span className="text-red-500">PAT</span>
+                   </h1>
+               </motion.div>
+
+               <motion.div
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="max-w-xs bg-neutral-950/80 p-6 rounded-2xl border border-yellow-500/20 backdrop-blur-md"
+               >
+                  <p className="text-lg text-white font-medium italic leading-relaxed">
+                     "Always sometimes maybe on time and can sometimes maybe pay but idk man ask me later."
+                  </p>
+                  <p className="text-xs text-neutral-500 mt-4 uppercase tracking-widest font-bold">
+                     Delivery Not Guaranteed
+                  </p>
+               </motion.div>
+           </div>
+        </div>
+      )
+    }] : []),
+
+    // Scott Barnardo Mountain Man Special
+    ...(player.Name === "Scott Barnardo" ? [{
+      id: 'mountain_man',
+      render: () => (
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.1),transparent_70%)]"></div>
+            
+            <div className="relative z-10 flex flex-col items-center text-center">
+                <motion.div
+                    initial={{ scale: 0, rotate: -10 }}
+                    animate={{ scale: 1, rotate: 0 }}
+                    transition={{ type: "spring", damping: 12 }}
+                    className="mb-8"
+                >
+                    <div className="text-7xl md:text-[8rem] leading-none filter drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                        🏔️
+                    </div>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    <div className="bg-neutral-800 border border-neutral-700 text-neutral-300 px-4 py-1 rounded-full inline-block mb-4 text-xs font-black uppercase tracking-[0.2em]">
+                        Lifestyle Award
+                    </div>
+                    <h1 className="text-5xl md:text-6xl font-black text-white display-font mb-6 italic">
+                        MOUNTAIN<br/>MAN
+                    </h1>
+                </motion.div>
+
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                    className="max-w-xs bg-neutral-900/80 p-6 rounded-2xl border border-white/10"
+                >
+                    <p className="text-lg text-white font-medium italic">
+                        "If he's not on the pitch, he's probably up a peak somewhere."
+                    </p>
+                </motion.div>
+            </div>
+        </div>
+      )
+    }] : []),
 
     // Martin Richards Special
     ...(player.Name === "Martin Richards" ? [{
@@ -1263,6 +1539,138 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
       )
     }] : []),
 
+    // Train Gap Jump (Everyone)
+    {
+       id: 'train_gap',
+       render: () => {
+         const believers = ["Martin Richards", "Shane Looker", "Mick Dicken", "Joe Bacon"];
+         const isBeliever = believers.includes(player.Name);
+         return (
+           <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
+               <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(16,185,129,0.1),transparent_70%)]"></div>
+               
+               <div className="relative z-10 flex flex-col items-center text-center">
+                   <motion.div
+                      initial={{ x: -100, opacity: 0 }}
+                      animate={{ x: 0, opacity: 1 }}
+                      transition={{ type: "spring", stiffness: 100 }}
+                      className="mb-8"
+                   >
+                      <div className="text-7xl md:text-[8rem] leading-none filter drop-shadow-[0_0_20px_rgba(16,185,129,0.3)]">
+                          🚂
+                      </div>
+                   </motion.div>
+
+                   <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 }}
+                   >
+                       <div className="bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 px-4 py-1 rounded-full inline-block mb-4 text-xs font-black uppercase tracking-[0.2em]">
+                          The Great Debate
+                       </div>
+                       <h2 className="text-2xl font-bold text-neutral-400 mb-2">Train Station Gap Jump</h2>
+                       <h1 className="text-4xl md:text-5xl font-black text-white display-font mb-6 leading-tight">
+                           {isBeliever ? <span className="text-emerald-500">BELIEVER</span> : <span className="text-red-500">DOUBTER</span>}
+                       </h1>
+                   </motion.div>
+
+                   <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      transition={{ delay: 0.5 }}
+                      className="max-w-xs bg-neutral-900/80 p-6 rounded-2xl border border-white/10 backdrop-blur-md"
+                   >
+                      <p className="text-lg text-white font-bold">
+                         {isBeliever 
+                            ? "You believed Mick could jump the train station gap!" 
+                            : "You didn't believe Mick could make the jump."}
+                      </p>
+                      {isBeliever && (
+                         <p className="text-sm text-neutral-400 mt-2 italic">
+                            "Physics is just a suggestion anyway."
+                         </p>
+                      )}
+                      {!isBeliever && (
+                         <p className="text-sm text-neutral-400 mt-2 italic">
+                            "A healthy dose of skepticism (and concern for life)."
+                         </p>
+                      )}
+                   </motion.div>
+               </div>
+           </div>
+         );
+       }
+    },
+
+    // Fines (New)
+    {
+      id: 'fines',
+      render: () => {
+        const debt = FINES_DATA[player.Name];
+        const hasDebt = !!debt;
+
+        return (
+          <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
+             {/* Background */}
+             <div className={`absolute inset-0 ${hasDebt ? 'bg-[radial-gradient(circle_at_center,_rgba(220,38,38,0.15),transparent_70%)]' : 'bg-[radial-gradient(circle_at_center,_rgba(16,185,129,0.15),transparent_70%)]'}`}></div>
+             
+             <div className="relative z-10 flex flex-col items-center text-center">
+                 <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", bounce: 0.5 }}
+                    className="mb-8"
+                 >
+                    <div className="text-7xl md:text-[8rem] leading-none drop-shadow-2xl">
+                        {hasDebt ? "💸" : "✅"}
+                    </div>
+                 </motion.div>
+
+                 <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                 >
+                     <div className={`border px-4 py-1 rounded-full inline-block mb-4 text-xs font-black uppercase tracking-[0.2em] ${hasDebt ? 'bg-red-500/20 border-red-500/40 text-red-400' : 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'}`}>
+                        Fines Report
+                     </div>
+                     <h2 className="text-2xl font-bold text-neutral-400 mb-2">
+                        {hasDebt ? "Outstanding Balance" : "Account Status"}
+                     </h2>
+                     <h1 className="text-5xl md:text-6xl font-black text-white display-font mb-6 leading-tight">
+                         {hasDebt ? (
+                           <span className="text-red-500">{debt}</span>
+                         ) : (
+                           <span className="text-emerald-500">PAID UP</span>
+                         )}
+                     </h1>
+                 </motion.div>
+
+                 <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="max-w-xs bg-neutral-900/80 p-6 rounded-2xl border border-white/10 backdrop-blur-md"
+                 >
+                    <p className="text-lg text-white font-bold italic">
+                       {hasDebt 
+                          ? "\"Get your wallet out.\""
+                          : "\"The treasurer sleeps easy tonight.\""
+                       }
+                    </p>
+                    {hasDebt && (
+                        <p className="text-xs text-neutral-500 mt-2 uppercase tracking-widest font-black text-red-500 animate-pulse">
+                           GIS YE MONEY KIDDA!
+                        </p>
+                    )}
+                 </motion.div>
+             </div>
+          </div>
+        );
+      }
+    },
+
     // Summary Card
     {
       id: 'summary',
@@ -1320,8 +1728,8 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                    <div className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-neutral-500">Matches</div>
                 </div>
                 <div className="bg-neutral-900/60 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/10 backdrop-blur-sm">
-                   <div className="text-2xl md:text-3xl font-black text-orange-500">{totalGoals}</div>
-                   <div className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-neutral-500">Goals</div>
+                   <div className="text-2xl md:text-3xl font-black text-orange-500">{player.Name === "Ethan Allen" ? player.Stats.Conceded : totalGoals}</div>
+                   <div className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-neutral-500">{player.Name === "Ethan Allen" ? "Goals Conceded" : "Goals"}</div>
                 </div>
                 <div className="bg-neutral-900/60 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/10 backdrop-blur-sm">
                    <div className="text-2xl md:text-3xl font-black text-yellow-500">{mom}</div>
@@ -1332,15 +1740,6 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                    <div className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-neutral-500">Cards</div>
                 </div>
              </div>
-          </div>
-
-          <div className="mt-8 flex gap-4 w-full max-w-sm relative z-10 shrink-0">
-             <button 
-                onClick={(e) => { e.stopPropagation(); onClose(); }}
-                className="w-full bg-neutral-800 text-white p-4 rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700 font-bold flex items-center justify-center gap-2"
-             >
-                <RefreshCcw className="w-5 h-5" /> Play Again
-             </button>
           </div>
         </div>
       )
@@ -1394,7 +1793,9 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
      return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentSlide, slides.length, onClose]);
 
+  // Play sound when slide changes
   useEffect(() => {
+     playSfx();
      if (slides[currentSlide].id === 'summary') {
         confetti({
            particleCount: 100,
