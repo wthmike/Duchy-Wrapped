@@ -139,7 +139,7 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ onSelect, onStartMusic }) =
   );
 
   return (
-    <div className="min-h-screen bg-neutral-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
+    <div className="min-h-[100dvh] bg-neutral-950 flex flex-col items-center justify-center p-6 relative overflow-hidden">
       {/* Dynamic Background */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(249,115,22,0.15),transparent_40%)] pointer-events-none" />
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(255,255,255,0.05),transparent_40%)] pointer-events-none" />
@@ -150,37 +150,37 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ onSelect, onStartMusic }) =
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-        className="w-full max-w-md z-10"
+        className="w-full max-w-md z-10 flex flex-col h-full justify-center"
       >
-        <div className="mb-12 text-center">
+        <div className="mb-8 text-center shrink-0">
           <motion.div 
             initial={{ scale: 0.8, rotate: -10 }}
             animate={{ scale: 1, rotate: 0 }}
             transition={{ type: "spring", stiffness: 200 }}
-            className="w-24 h-24 bg-gradient-to-br from-orange-500 to-orange-700 rounded-2xl mx-auto mb-6 flex items-center justify-center shadow-[0_0_40px_rgba(234,88,12,0.6)] rotate-3 border border-orange-400/30"
+            className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-700 rounded-2xl mx-auto mb-4 flex items-center justify-center shadow-[0_0_40px_rgba(234,88,12,0.6)] rotate-3 border border-orange-400/30"
           >
-             <Home className="text-white w-12 h-12" />
+             <Home className="text-white w-10 h-10" />
           </motion.div>
-          <h1 className="text-6xl font-black mb-2 text-white display-font tracking-tighter leading-none drop-shadow-xl">
+          <h1 className="text-5xl font-black mb-2 text-white display-font tracking-tighter leading-none drop-shadow-xl">
             DUCHY<br/><span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600">WRAPPED</span>
           </h1>
-          <div className="inline-block mt-4 px-4 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
-            <p className="text-neutral-300 font-bold tracking-[0.2em] text-xs uppercase">Half Season Review</p>
+          <div className="inline-block mt-2 px-4 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md">
+            <p className="text-neutral-300 font-bold tracking-[0.2em] text-[10px] uppercase">Half Season Review</p>
           </div>
         </div>
 
-        <div className="relative mb-6 group">
+        <div className="relative mb-4 group shrink-0">
           <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-500 w-5 h-5 group-focus-within:text-orange-500 transition-colors" />
           <input
             type="text"
             placeholder="Search player name..."
-            className="w-full pl-12 pr-4 py-5 bg-neutral-900/80 backdrop-blur-xl border border-white/10 rounded-2xl text-xl text-white placeholder-neutral-600 focus:ring-2 focus:ring-orange-500/50 focus:outline-none focus:border-orange-500/50 transition-all shadow-2xl"
+            className="w-full pl-12 pr-4 py-4 bg-neutral-900/80 backdrop-blur-xl border border-white/10 rounded-2xl text-lg text-white placeholder-neutral-600 focus:ring-2 focus:ring-orange-500/50 focus:outline-none focus:border-orange-500/50 transition-all shadow-2xl"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
         </div>
 
-        <div className="space-y-3 max-h-64 overflow-y-auto custom-scrollbar pr-2">
+        <div className="space-y-3 flex-1 overflow-y-auto custom-scrollbar pr-2 min-h-0">
           {filteredPlayers.map((player) => (
             <motion.button
               key={player["Squad Number"]}
@@ -192,15 +192,15 @@ const SearchScreen: React.FC<SearchScreenProps> = ({ onSelect, onStartMusic }) =
                 onStartMusic();
                 onSelect(player);
               }}
-              className="w-full p-4 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center justify-between group transition-colors hover:border-orange-500/40 backdrop-blur-sm"
+              className="w-full p-3 bg-neutral-900/60 border border-white/5 rounded-xl flex items-center justify-between group transition-colors hover:border-orange-500/40 backdrop-blur-sm"
             >
-              <div className="flex items-center gap-4">
-                <span className="w-10 h-10 rounded bg-neutral-800 flex items-center justify-center text-sm font-black text-neutral-400 group-hover:bg-orange-500 group-hover:text-black transition-all font-mono">
+              <div className="flex items-center gap-3">
+                <span className="w-8 h-8 rounded bg-neutral-800 flex items-center justify-center text-xs font-black text-neutral-400 group-hover:bg-orange-500 group-hover:text-black transition-all font-mono">
                   {player["Squad Number"]}
                 </span>
-                <span className="font-bold text-lg text-neutral-200 group-hover:text-white transition-colors">{player.Name}</span>
+                <span className="font-bold text-base text-neutral-200 group-hover:text-white transition-colors text-left">{player.Name}</span>
               </div>
-              <ChevronRight className="w-5 h-5 text-neutral-600 group-hover:text-orange-500" />
+              <ChevronRight className="w-4 h-4 text-neutral-600 group-hover:text-orange-500" />
             </motion.button>
           ))}
           {query && filteredPlayers.length === 0 && (
@@ -286,11 +286,11 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
     {
       id: 'intro',
       render: () => (
-        <div className="flex flex-col items-center justify-center h-full text-center p-8 bg-black relative">
+        <div className="flex flex-col items-center justify-center h-full text-center p-6 bg-black relative">
           <div className="absolute inset-0 bg-gradient-to-t from-orange-900/20 via-black to-black animate-pulse"></div>
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/stardust.png')] opacity-20"></div>
           
-          <h1 className="text-7xl md:text-8xl font-black text-white display-font uppercase leading-[0.85] relative z-10 drop-shadow-2xl">
+          <h1 className="text-6xl md:text-8xl font-black text-white display-font uppercase leading-[0.85] relative z-10 drop-shadow-2xl">
             <motion.span 
               initial={{ x: -50, opacity: 0 }} 
               animate={{ x: 0, opacity: 1 }}
@@ -323,48 +323,11 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
 
     // --- EARLY SPECIAL SLIDES ---
 
-    // Shane Looker Inbetweeners Slide (Moved Up)
-    ...(player.Name === "Shane Looker" ? [{
-      id: 'inbetweeners',
-      render: () => (
-        <div className="flex flex-col h-full justify-center p-0 bg-black relative overflow-hidden">
-           {/* Background Image */}
-           <div className="absolute inset-0 z-0">
-               <img 
-                  src="https://a1cf74336522e87f135f-2f21ace9a6cf0052456644b80fa06d4f.ssl.cf2.rackcdn.com/images/characters/large/800/Jay-Cartwright.The-Inbetweeners.webp" 
-                  alt="Jay Cartwright"
-                  className="w-full h-full object-cover opacity-60 scale-110"
-               />
-               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
-           </div>
-           
-           <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16">
-               <motion.div
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 }}
-                  className="text-center px-6"
-               >
-                  <div className="bg-yellow-400 text-black font-black uppercase tracking-tighter text-4xl px-4 py-2 rotate-2 inline-block mb-4 shadow-[5px_5px_0px_rgba(0,0,0,1)]">
-                     BUS WANKER?
-                  </div>
-                  <h1 className="text-5xl font-black text-white display-font mb-4 drop-shadow-2xl">
-                      UNCANNY<br/>RESEMBLANCE
-                  </h1>
-                  <p className="text-neutral-300 text-lg font-medium max-w-xs mx-auto bg-black/50 p-2 rounded-lg backdrop-blur-sm border border-white/10">
-                     "Completed it mate."
-                  </p>
-               </motion.div>
-           </div>
-        </div>
-      )
-    }] : []),
-
     // Phil Fordham Skort Slide
     ...(player.Name === "Phill Fordham" ? [{
       id: 'skort',
       render: () => (
-        <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(236,72,153,0.2),transparent_70%)]"></div>
            
            <div className="relative z-10 flex flex-col items-center text-center">
@@ -374,7 +337,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                   transition={{ type: "spring", bounce: 0.5 }}
                   className="mb-8 relative"
                >
-                  <div className="text-[8rem] leading-none drop-shadow-2xl">
+                  <div className="text-7xl md:text-8xl leading-none drop-shadow-2xl filter drop-shadow-[0_0_15px_rgba(236,72,153,0.5)]">
                       👗
                   </div>
                </motion.div>
@@ -414,10 +377,10 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
       render: () => {
         const percentage = Math.round((totalApps / squadStats.maxApps) * 100);
         return (
-        <div className="flex flex-col h-full p-8 bg-neutral-950 relative overflow-hidden">
+        <div className="flex flex-col h-full p-6 bg-neutral-950 relative overflow-hidden">
           <div className="absolute right-[-100px] top-[-100px] w-96 h-96 bg-orange-600/10 rounded-full blur-[100px] animate-pulse"></div>
           
-          <h2 className="text-5xl font-black mb-12 max-w-xs leading-none text-white uppercase display-font relative z-10">
+          <h2 className="text-5xl font-black mb-8 max-w-xs leading-none text-white uppercase display-font relative z-10">
             Pitch<br/><span className="text-orange-600">Time</span>
           </h2>
           
@@ -428,10 +391,10 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                transition={{ type: "spring", bounce: 0.4, duration: 0.8 }}
                className="flex items-baseline"
              >
-                <span className="text-[12rem] font-black text-white display-font drop-shadow-[0_0_40px_rgba(249,115,22,0.4)]">
+                <span className="text-8xl md:text-9xl font-black text-white display-font drop-shadow-[0_0_40px_rgba(249,115,22,0.4)]">
                    {totalApps}
                 </span>
-                <span className="text-5xl font-bold text-neutral-500 ml-2">
+                <span className="text-3xl md:text-5xl font-bold text-neutral-500 ml-2">
                    /{squadStats.maxApps}
                 </span>
              </motion.div>
@@ -439,9 +402,9 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="bg-neutral-900/50 backdrop-blur px-6 py-2 rounded-full border border-orange-500/30"
+                className="bg-neutral-900/50 backdrop-blur px-6 py-2 rounded-full border border-orange-500/30 mt-4"
              >
-                <p className="text-xl font-bold text-orange-400 uppercase tracking-widest">Games Played</p>
+                <p className="text-lg md:text-xl font-bold text-orange-400 uppercase tracking-widest">Games Played</p>
              </motion.div>
              <p className="mt-4 text-neutral-400 font-medium">That's {percentage}% of the season.</p>
           </div>
@@ -453,7 +416,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
             className="mt-auto border-l-4 border-orange-500 pl-6 py-2 relative z-10"
           >
              <p className="text-neutral-500 text-xs uppercase font-bold mb-1 tracking-widest">Squad Status</p>
-             <p className="text-white text-xl font-bold">
+             <p className="text-white text-lg md:text-xl font-bold">
                 {totalApps >= squadStats.maxApps - 2 ? "The First Name on the Sheet" : "Rotation Risk"}
              </p>
           </motion.div>
@@ -467,7 +430,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
         const { teamRecord, biggestWin, formGuide } = squadStats;
         
         return (
-          <div className="flex flex-col h-full p-8 bg-neutral-900 relative overflow-hidden">
+          <div className="flex flex-col h-full p-6 bg-neutral-900 relative overflow-hidden">
              {/* Swish background elements */}
              <div className="absolute top-0 right-0 w-full h-full bg-[radial-gradient(circle_at_top_right,_rgba(249,115,22,0.1),transparent_50%)]"></div>
              <motion.div 
@@ -490,7 +453,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                 </h2>
              </div>
 
-             <div className="flex-1 flex flex-col justify-start gap-8 relative z-10">
+             <div className="flex-1 flex flex-col justify-start gap-6 relative z-10">
                 
                 {/* Highlight Stats */}
                 <div className="grid grid-cols-3 gap-3">
@@ -498,27 +461,27 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.1 }}
-                      className="bg-neutral-800 p-4 rounded-xl flex flex-col items-center justify-center border-t-4 border-green-500"
+                      className="bg-neutral-800 p-3 rounded-xl flex flex-col items-center justify-center border-t-4 border-green-500"
                    >
-                      <span className="text-3xl font-black text-white">{teamRecord.wins}</span>
+                      <span className="text-2xl md:text-3xl font-black text-white">{teamRecord.wins}</span>
                       <span className="text-[10px] uppercase font-bold text-neutral-400 mt-1">Wins</span>
                    </motion.div>
                    <motion.div 
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.2 }}
-                      className="bg-neutral-800 p-4 rounded-xl flex flex-col items-center justify-center border-t-4 border-neutral-500"
+                      className="bg-neutral-800 p-3 rounded-xl flex flex-col items-center justify-center border-t-4 border-neutral-500"
                    >
-                      <span className="text-3xl font-black text-white">{teamRecord.draws}</span>
+                      <span className="text-2xl md:text-3xl font-black text-white">{teamRecord.draws}</span>
                       <span className="text-[10px] uppercase font-bold text-neutral-400 mt-1">Draws</span>
                    </motion.div>
                    <motion.div 
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ delay: 0.3 }}
-                      className="bg-neutral-800 p-4 rounded-xl flex flex-col items-center justify-center border-t-4 border-red-500"
+                      className="bg-neutral-800 p-3 rounded-xl flex flex-col items-center justify-center border-t-4 border-red-500"
                    >
-                      <span className="text-3xl font-black text-white">{teamRecord.losses}</span>
+                      <span className="text-2xl md:text-3xl font-black text-white">{teamRecord.losses}</span>
                       <span className="text-[10px] uppercase font-bold text-neutral-400 mt-1">Losses</span>
                    </motion.div>
                 </div>
@@ -529,10 +492,10 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
                 >
-                   <h3 className="text-xs uppercase font-bold text-neutral-500 tracking-widest mb-3">Recent Form (Most Recent on Right)</h3>
+                   <h3 className="text-xs uppercase font-bold text-neutral-500 tracking-widest mb-3">Recent Form</h3>
                    <div className="flex gap-2">
                       {formGuide.slice(-5).map((result, i) => (
-                        <div key={i} className={`w-10 h-10 rounded-full flex items-center justify-center font-black text-sm border-2 ${
+                        <div key={i} className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center font-black text-xs md:text-sm border-2 ${
                             result === 'W' ? 'bg-green-500/20 border-green-500 text-green-500' :
                             result === 'L' ? 'bg-red-500/20 border-red-500 text-red-500' :
                             'bg-neutral-500/20 border-neutral-500 text-neutral-400'
@@ -541,7 +504,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                         </div>
                       ))}
                       {formGuide.length < 5 && Array(5 - formGuide.length).fill(0).map((_, i) => (
-                          <div key={`empty-${i}`} className="w-10 h-10 rounded-full border-2 border-neutral-800 bg-neutral-900"></div>
+                          <div key={`empty-${i}`} className="w-8 h-8 md:w-10 md:h-10 rounded-full border-2 border-neutral-800 bg-neutral-900"></div>
                       ))}
                    </div>
                 </motion.div>
@@ -552,20 +515,20 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                        initial={{ opacity: 0, x: -20 }}
                        animate={{ opacity: 1, x: 0 }}
                        transition={{ delay: 0.5 }}
-                       className="bg-gradient-to-r from-neutral-800 to-neutral-900 p-5 rounded-2xl border border-white/5"
+                       className="bg-gradient-to-r from-neutral-800 to-neutral-900 p-4 rounded-2xl border border-white/5"
                     >
                        <h3 className="text-xs uppercase font-bold text-orange-500 tracking-widest mb-2 flex items-center gap-2">
                            <Crown className="w-4 h-4" /> Season Highlight
                        </h3>
                        <div className="flex justify-between items-end">
                           <div>
-                             <p className="text-neutral-400 text-sm">Best Performance vs</p>
-                             <p className="text-xl font-bold text-white truncate max-w-[150px]">{biggestWin.opponent}</p>
+                             <p className="text-neutral-400 text-xs md:text-sm">Best Performance vs</p>
+                             <p className="text-lg md:text-xl font-bold text-white truncate max-w-[150px]">{biggestWin.opponent}</p>
                              {biggestWin.opponent.includes("Truro") && (
                                 <p className="text-orange-400 text-xs italic mt-1 font-bold">"Have it ye twats!"</p>
                              )}
                           </div>
-                          <div className="text-3xl font-black text-white">{biggestWin.score}</div>
+                          <div className="text-2xl md:text-3xl font-black text-white">{biggestWin.score}</div>
                        </div>
                     </motion.div>
                 )}
@@ -578,12 +541,12 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                    className="flex justify-between items-center bg-neutral-900/50 p-4 rounded-xl border border-white/5"
                 >
                    <div>
-                       <span className="block text-2xl font-black text-white">{teamRecord.goalsFor}</span>
+                       <span className="block text-xl md:text-2xl font-black text-white">{teamRecord.goalsFor}</span>
                        <span className="text-[10px] uppercase text-neutral-500 font-bold">Goals For</span>
                    </div>
                    <div className="h-8 w-px bg-neutral-800"></div>
                    <div className="text-right">
-                       <span className="block text-2xl font-black text-white">{teamRecord.goalsAgainst}</span>
+                       <span className="block text-xl md:text-2xl font-black text-white">{teamRecord.goalsAgainst}</span>
                        <span className="text-[10px] uppercase text-neutral-500 font-bold">Goals Against</span>
                    </div>
                 </motion.div>
@@ -605,7 +568,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
          const showCelebration = hasGoals || hasAssistsOnly;
 
          return (
-          <div className="flex flex-col h-full justify-between p-8 bg-black relative overflow-hidden">
+          <div className="flex flex-col h-full justify-between p-6 bg-black relative overflow-hidden">
              {/* Enhanced animated background */}
              <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,_rgba(30,30,30,1),rgba(0,0,0,1))]"></div>
              {showCelebration && (
@@ -621,16 +584,16 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                </h2>
              </div>
 
-             <div className="self-center my-4 relative z-10 w-full">
+             <div className="self-center my-4 relative z-10 w-full flex-1 flex flex-col justify-center">
                {hasGoals ? (
                  <div className="flex flex-col items-center">
                    {/* Total Goal Count */}
-                   <div className="relative mb-8 transform hover:scale-105 transition-transform duration-300">
+                   <div className="relative mb-6 transform hover:scale-105 transition-transform duration-300">
                       <motion.div
                          initial={{ scale: 0.5, opacity: 0 }}
                          animate={{ scale: 1, opacity: 1 }}
                          transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                         className="text-[12rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-b from-orange-400 via-orange-500 to-orange-700 display-font relative z-10 drop-shadow-[0_0_25px_rgba(249,115,22,0.4)]"
+                         className="text-9xl md:text-[12rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-b from-orange-400 via-orange-500 to-orange-700 display-font relative z-10 drop-shadow-[0_0_25px_rgba(249,115,22,0.4)]"
                       >
                           {totalGoals}
                       </motion.div>
@@ -644,7 +607,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                            <Trophy className="w-4 h-4" /> You are Top Scorer!
                         </p>
                       ) : (
-                        <p className="text-neutral-400 text-sm">
+                        <p className="text-neutral-400 text-xs md:text-sm">
                            Chasing <span className="text-white font-bold">{squadStats.topScorer.Name}</span> ({squadStats.topScorer.Stats["M1 Goals"]}). <br/>
                            Only {diff} to go!
                         </p>
@@ -660,7 +623,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                         className="bg-neutral-900 p-3 rounded-2xl border border-white/5 flex flex-col items-center text-center shadow-lg"
                       >
                          <CircleDot className="w-5 h-5 text-blue-500 mb-2" />
-                         <span className="text-2xl font-black text-white">{openPlayGoals}</span>
+                         <span className="text-xl md:text-2xl font-black text-white">{openPlayGoals}</span>
                          <span className="text-[9px] uppercase text-neutral-500 font-bold leading-tight mt-1">Open<br/>Play</span>
                       </motion.div>
 
@@ -671,7 +634,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                         className="bg-neutral-900 p-3 rounded-2xl border border-white/5 flex flex-col items-center text-center shadow-lg"
                       >
                          <Crosshair className="w-5 h-5 text-orange-500 mb-2" />
-                         <span className="text-2xl font-black text-white">{penaltyCornerGoals}</span>
+                         <span className="text-xl md:text-2xl font-black text-white">{penaltyCornerGoals}</span>
                          <span className="text-[9px] uppercase text-neutral-500 font-bold leading-tight mt-1">Penalty<br/>Corner</span>
                       </motion.div>
 
@@ -682,7 +645,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                         className="bg-neutral-900 p-3 rounded-2xl border border-white/5 flex flex-col items-center text-center shadow-lg"
                       >
                          <Flag className="w-5 h-5 text-green-500 mb-2" />
-                         <span className="text-2xl font-black text-white">{penaltyFlickGoals}</span>
+                         <span className="text-xl md:text-2xl font-black text-white">{penaltyFlickGoals}</span>
                          <span className="text-[9px] uppercase text-neutral-500 font-bold leading-tight mt-1">Penalty<br/>Flick</span>
                       </motion.div>
                    </div>
@@ -694,7 +657,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                          initial={{ scale: 0.5, opacity: 0 }}
                          animate={{ scale: 1, opacity: 1 }}
                          transition={{ type: "spring", stiffness: 200, damping: 10 }}
-                         className="text-[12rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-400 via-cyan-500 to-teal-600 display-font relative z-10 drop-shadow-[0_0_25px_rgba(56,189,248,0.4)]"
+                         className="text-9xl md:text-[12rem] leading-none font-black text-transparent bg-clip-text bg-gradient-to-b from-blue-400 via-cyan-500 to-teal-600 display-font relative z-10 drop-shadow-[0_0_25px_rgba(56,189,248,0.4)]"
                       >
                           {assists}
                       </motion.div>
@@ -725,12 +688,12 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                 <div className="flex justify-between items-center">
                    <div>
                       <div className="text-[10px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Involvements</div>
-                      <div className="text-3xl font-black text-white">{totalInvolvement}</div>
+                      <div className="text-2xl md:text-3xl font-black text-white">{totalInvolvement}</div>
                    </div>
                    <div className="h-10 w-px bg-neutral-800"></div>
                    <div className="text-right">
                       <div className="text-[10px] uppercase tracking-widest text-neutral-500 mb-1 font-bold">Assists</div>
-                      <div className="text-3xl font-black text-white">{assists}</div>
+                      <div className="text-2xl md:text-3xl font-black text-white">{assists}</div>
                    </div>
                 </div>
              </motion.div>
@@ -738,11 +701,49 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
         );
       }
     },
+
+    // Shane Looker Inbetweeners Slide (Moved Here)
+    ...(player.Name === "Shane Looker" ? [{
+      id: 'inbetweeners',
+      render: () => (
+        <div className="flex flex-col h-full justify-center p-0 bg-black relative overflow-hidden">
+           {/* Background Image */}
+           <div className="absolute inset-0 z-0">
+               <img 
+                  src="https://a1cf74336522e87f135f-2f21ace9a6cf0052456644b80fa06d4f.ssl.cf2.rackcdn.com/images/characters/large/800/Jay-Cartwright.The-Inbetweeners.webp" 
+                  alt="Jay Cartwright"
+                  className="w-full h-full object-cover opacity-60 scale-110"
+               />
+               <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/40"></div>
+           </div>
+           
+           <div className="relative z-10 flex flex-col items-center justify-end h-full pb-16">
+               <motion.div
+                  initial={{ y: 50, opacity: 0 }}
+                  animate={{ y: 0, opacity: 1 }}
+                  transition={{ delay: 0.3 }}
+                  className="text-center px-6"
+               >
+                  <div className="bg-yellow-400 text-black font-black uppercase tracking-tighter text-4xl px-4 py-2 rotate-2 inline-block mb-4 shadow-[5px_5px_0px_rgba(0,0,0,1)]">
+                     BUS WANKER?
+                  </div>
+                  <h1 className="text-5xl font-black text-white display-font mb-4 drop-shadow-2xl">
+                      UNCANNY<br/>RESEMBLANCE
+                  </h1>
+                  <p className="text-neutral-300 text-lg font-medium max-w-xs mx-auto bg-black/50 p-2 rounded-lg backdrop-blur-sm border border-white/10">
+                     "Completed it mate."
+                  </p>
+               </motion.div>
+           </div>
+        </div>
+      )
+    }] : []),
+
     // Man of the Match (MoM) Slide
     {
       id: 'mom',
       render: () => (
-        <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
            {/* Gold/Orange spotlight background */}
            <div className="absolute top-0 left-0 w-full h-2/3 bg-gradient-to-b from-yellow-600/10 to-transparent"></div>
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(234,179,8,0.05),transparent_60%)]"></div>
@@ -766,7 +767,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                             transition={{ type: "spring", bounce: 0.5, delay: 0.2 }}
                             className="relative mb-6"
                           >
-                             <Star className="w-32 h-32 text-yellow-500 fill-yellow-500 drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]" />
+                             <Star className="w-24 h-24 md:w-32 md:h-32 text-yellow-500 fill-yellow-500 drop-shadow-[0_0_30px_rgba(234,179,8,0.5)]" />
                              <div className="absolute inset-0 flex items-center justify-center">
                                 <span className="text-4xl font-black text-yellow-950">{mom}</span>
                              </div>
@@ -830,7 +831,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
          const myPoints = player.Stats["Card Points"] || 0;
          
          return (
-           <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+           <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
               <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-red-900/20 via-black to-black"></div>
               
               {isNaughty ? (
@@ -915,7 +916,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
     ...(player.Name === "Martin Richards" ? [{
       id: 'nickname',
       render: () => (
-        <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(236,72,153,0.15),transparent_60%)]"></div>
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-pink-500/5 rounded-full blur-3xl animate-pulse"></div>
             
@@ -926,7 +927,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                     transition={{ type: "spring", damping: 12 }}
                     className="mb-8"
                 >
-                    <div className="text-[8rem] leading-none filter drop-shadow-[0_0_30px_rgba(236,72,153,0.5)]">
+                    <div className="text-7xl md:text-[8rem] leading-none filter drop-shadow-[0_0_20px_rgba(236,72,153,0.5)]">
                         👨🏻
                     </div>
                 </motion.div>
@@ -940,7 +941,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                         Status Update
                     </div>
                     <h2 className="text-2xl font-bold text-neutral-400 mb-2">New Nickname Acquired</h2>
-                    <h1 className="text-6xl font-black text-white display-font text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 mb-8 italic">
+                    <h1 className="text-5xl md:text-6xl font-black text-white display-font text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-purple-600 mb-8 italic">
                         "PORNSTAR"
                     </h1>
                 </motion.div>
@@ -963,7 +964,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
     ...(player.Name === "Mick Dicken" ? [{
       id: 'handsome',
       render: () => (
-        <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(124,58,237,0.15),transparent_60%)]"></div>
            
            <div className="relative z-10 flex flex-col items-center text-center">
@@ -972,7 +973,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                   animate={{ scale: 1, rotate: 0 }}
                   className="mb-6"
                >
-                  <div className="text-[8rem] leading-none drop-shadow-2xl">
+                  <div className="text-7xl md:text-[8rem] leading-none drop-shadow-2xl filter drop-shadow-[0_0_20px_rgba(124,58,237,0.5)]">
                       🤵
                   </div>
                </motion.div>
@@ -982,8 +983,8 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                >
-                  <h2 className="text-2xl font-bold text-neutral-400 mb-2 uppercase tracking-widest">Official Squad Ranking</h2>
-                  <h1 className="text-5xl font-black text-white display-font mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
+                  <h2 className="text-xl md:text-2xl font-bold text-neutral-400 mb-2 uppercase tracking-widest">Official Squad Ranking</h2>
+                  <h1 className="text-4xl md:text-5xl font-black text-white display-font mb-6 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400">
                       MOST HANDSOME<br/>MAN
                   </h1>
                </motion.div>
@@ -1010,7 +1011,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
     ...(player.Name === "Ben Andrews" ? [{
       id: 'handsome_2nd',
       render: () => (
-        <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(124,58,237,0.15),transparent_60%)]"></div>
            
            <div className="relative z-10 flex flex-col items-center text-center">
@@ -1019,7 +1020,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                   animate={{ scale: 1, rotate: 0 }}
                   className="mb-6"
                >
-                  <div className="text-[8rem] leading-none drop-shadow-2xl grayscale opacity-80">
+                  <div className="text-7xl md:text-[8rem] leading-none drop-shadow-2xl grayscale opacity-80 filter drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                       🤵
                   </div>
                </motion.div>
@@ -1029,7 +1030,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                   animate={{ y: 0, opacity: 1 }}
                   transition={{ delay: 0.2 }}
                >
-                  <h2 className="text-2xl font-bold text-neutral-400 mb-2 uppercase tracking-widest">Official Squad Ranking</h2>
+                  <h2 className="text-xl md:text-2xl font-bold text-neutral-400 mb-2 uppercase tracking-widest">Official Squad Ranking</h2>
                   <h1 className="text-4xl font-black text-white display-font mb-6 text-neutral-300">
                       HANDSOME<br/>RUNNER UP
                   </h1>
@@ -1059,7 +1060,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
       render: () => {
         const isHead = player.Name === "Martyn Head";
         return (
-          <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+          <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
              {/* Background */}
              <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.1),transparent_70%)]"></div>
              
@@ -1069,7 +1070,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                     animate={{ y: 0, opacity: 1 }}
                     className="mb-8"
                  >
-                    <div className="text-[8rem] leading-none drop-shadow-2xl">
+                    <div className="text-7xl md:text-[8rem] leading-none drop-shadow-2xl filter drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
                         👨‍🦲
                     </div>
                  </motion.div>
@@ -1082,8 +1083,8 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                      <div className="bg-neutral-800 border border-neutral-700 text-neutral-300 px-4 py-1 rounded-full inline-block mb-4 text-xs font-black uppercase tracking-[0.2em]">
                         Advanced Analytics
                      </div>
-                     <h2 className="text-3xl font-bold text-neutral-500 mb-2">Hairline Trajectory</h2>
-                     <h1 className="text-5xl font-black text-white display-font mb-6 leading-tight">
+                     <h2 className="text-2xl md:text-3xl font-bold text-neutral-500 mb-2">Hairline Trajectory</h2>
+                     <h1 className="text-4xl md:text-5xl font-black text-white display-font mb-6 leading-tight">
                          IT'S NOT<br/><span className="text-red-600">LOOKING GOOD</span>
                      </h1>
                  </motion.div>
@@ -1115,7 +1116,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
     ...(player.Name === "Ethan Allen" ? [{
       id: 'flappy_hand',
       render: () => (
-        <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(255,255,255,0.1),transparent_60%)]"></div>
            
            <div className="relative z-10 flex flex-col items-center text-center">
@@ -1125,7 +1126,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                   transition={{ repeat: Infinity, repeatType: "reverse", duration: 1.5 }}
                   className="mb-8"
                >
-                  <div className="text-[8rem] leading-none drop-shadow-2xl">
+                  <div className="text-7xl md:text-[8rem] leading-none drop-shadow-2xl filter drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
                       🧤
                   </div>
                </motion.div>
@@ -1138,8 +1139,8 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                    <div className="bg-red-500/20 border border-red-500/40 text-red-400 px-4 py-1 rounded-full inline-block mb-4 text-xs font-black uppercase tracking-[0.2em]">
                       Defensive Analysis
                    </div>
-                   <h2 className="text-3xl font-bold text-neutral-500 mb-2">Goalkeeping Style</h2>
-                   <h1 className="text-5xl font-black text-white display-font mb-6 leading-tight">
+                   <h2 className="text-2xl md:text-3xl font-bold text-neutral-500 mb-2">Goalkeeping Style</h2>
+                   <h1 className="text-4xl md:text-5xl font-black text-white display-font mb-6 leading-tight">
                        THE FLAPPY<br/>HAND
                    </h1>
                </motion.div>
@@ -1166,7 +1167,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
     ...(player.Name === "Ben Roberts" ? [{
       id: 'blobby',
       render: () => (
-        <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(236,72,153,0.3),transparent_60%)]"></div>
             
             <div className="relative z-10 flex flex-col items-center text-center">
@@ -1176,7 +1177,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                     transition={{ type: "spring", bounce: 0.6, repeat: Infinity, repeatType: "mirror", duration: 1 }}
                     className="mb-8"
                 >
-                    <div className="text-[8rem] leading-none drop-shadow-2xl">
+                    <div className="text-7xl md:text-[8rem] leading-none drop-shadow-2xl filter drop-shadow-[0_0_20px_rgba(236,72,153,0.4)]">
                         🍬
                     </div>
                 </motion.div>
@@ -1190,7 +1191,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                         Icon Status
                     </div>
                     <h2 className="text-2xl font-bold text-neutral-400 mb-2">New Nickname</h2>
-                    <h1 className="text-6xl font-black text-white display-font text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-yellow-400 mb-8 drop-shadow-lg">
+                    <h1 className="text-5xl md:text-6xl font-black text-white display-font text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-yellow-400 mb-8 drop-shadow-lg">
                         MR BLOBBY
                     </h1>
                 </motion.div>
@@ -1214,7 +1215,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
     ...(["Phill Fordham", "Alex Roberts"].includes(player.Name) ? [{
       id: 'hamstring',
       render: () => (
-        <div className="flex flex-col h-full justify-center p-8 bg-neutral-950 relative overflow-hidden">
+        <div className="flex flex-col h-full justify-center p-6 bg-neutral-950 relative overflow-hidden">
            <div className="absolute inset-0 bg-[radial-gradient(circle_at_bottom,_rgba(239,68,68,0.2),transparent_70%)]"></div>
            
            <div className="relative z-10 flex flex-col items-center text-center">
@@ -1224,9 +1225,9 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                   transition={{ duration: 0.5, delay: 0.5 }}
                   className="mb-8 relative"
                >
-                  <Activity className="w-32 h-32 text-red-500" />
+                  <Activity className="w-24 h-24 md:w-32 md:h-32 text-red-500" />
                   <div className="absolute -top-4 -right-4">
-                     <Flame className="w-16 h-16 text-orange-500 animate-pulse" />
+                     <Flame className="w-12 h-12 md:w-16 md:h-16 text-orange-500 animate-pulse" />
                   </div>
                </motion.div>
 
@@ -1238,8 +1239,8 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                    <div className="bg-red-500/20 border border-red-500/40 text-red-400 px-4 py-1 rounded-full inline-block mb-4 text-xs font-black uppercase tracking-[0.2em]">
                       Injury Report
                    </div>
-                   <h2 className="text-3xl font-bold text-neutral-500 mb-2">Diagnosis Confirmed</h2>
-                   <h1 className="text-5xl font-black text-white display-font mb-6 leading-tight">
+                   <h2 className="text-2xl md:text-3xl font-bold text-neutral-500 mb-2">Diagnosis Confirmed</h2>
+                   <h1 className="text-4xl md:text-5xl font-black text-white display-font mb-6 leading-tight">
                        DEVIL'S<br/><span className="text-red-600">HAMSTRING</span>
                    </h1>
                </motion.div>
@@ -1269,33 +1270,33 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
         <div className="flex flex-col h-full items-center justify-center p-6 bg-neutral-900 relative">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
           
-          <div className="mb-6 text-center relative z-10">
-             <h2 className="text-2xl font-bold text-white mb-2">Half Season Complete</h2>
-             <p className="text-neutral-400 text-sm">Save your card to share.</p>
+          <div className="mb-6 text-center relative z-10 shrink-0">
+             <h2 className="text-xl md:text-2xl font-bold text-white mb-2">Half Season Complete</h2>
+             <p className="text-neutral-400 text-sm">Thanks for playing.</p>
           </div>
 
           {/* THE CARD TO DOWNLOAD */}
           <div 
              ref={cardRef} 
-             className="w-full max-w-sm aspect-[4/5] bg-black text-white rounded-3xl p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden border border-neutral-800"
+             className="w-full max-w-sm aspect-[4/5] max-h-[60vh] bg-black text-white rounded-3xl p-6 md:p-8 flex flex-col justify-between shadow-2xl relative overflow-hidden border border-neutral-800"
           >
              {/* Styling Elements for Card */}
              <div className="absolute top-0 right-0 w-80 h-80 bg-orange-500 rounded-full blur-[100px] opacity-20 pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
              <div className="absolute bottom-0 left-0 w-64 h-64 bg-neutral-700 rounded-full blur-[80px] opacity-20 pointer-events-none translate-y-1/3 -translate-x-1/3"></div>
              
              <div className="relative z-10">
-                <div className="flex justify-between items-start mb-8">
+                <div className="flex justify-between items-start mb-4 md:mb-8">
                   <div>
-                    <div className="text-xs font-black uppercase tracking-[0.2em] text-orange-500 mb-1">Duchy Hockey</div>
-                    <div className="text-sm font-bold text-neutral-400">Half Season Review</div>
+                    <div className="text-[10px] md:text-xs font-black uppercase tracking-[0.2em] text-orange-500 mb-1">Duchy Hockey</div>
+                    <div className="text-xs md:text-sm font-bold text-neutral-400">Half Season Review</div>
                   </div>
-                  <div className="w-12 h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-orange-500 font-black text-xl shadow-lg border border-white/5">
+                  <div className="w-10 h-10 md:w-12 md:h-12 bg-white/10 backdrop-blur-md rounded-xl flex items-center justify-center text-orange-500 font-black text-lg md:text-xl shadow-lg border border-white/5">
                      {player["Squad Number"]}
                   </div>
                 </div>
                 
                 <div>
-                   <h1 className="text-5xl font-black uppercase leading-[0.85] display-font mb-2 break-words">
+                   <h1 className="text-4xl md:text-5xl font-black uppercase leading-[0.85] display-font mb-2 break-words">
                     {player.Name.split(' ').map((n, i) => (
                       <span key={i} className={i === 1 ? "text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-600" : "text-white"}>{n}<br/></span>
                     ))}
@@ -1303,48 +1304,42 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                 </div>
 
                 {specialAward && (
-                   <div className="mt-4 flex items-center gap-3 bg-neutral-900/40 p-3 rounded-2xl border border-white/5 backdrop-blur-md">
-                      <div className="text-3xl">{specialAward.emoji}</div>
+                   <div className="mt-4 flex items-center gap-3 bg-neutral-900/40 p-2 md:p-3 rounded-2xl border border-white/5 backdrop-blur-md">
+                      <div className="text-2xl md:text-3xl">{specialAward.emoji}</div>
                       <div>
-                         <div className="text-[10px] uppercase font-bold text-neutral-500 tracking-widest leading-tight">{specialAward.label}</div>
-                         <div className="text-lg font-black text-white leading-none mt-1">{specialAward.text}</div>
+                         <div className="text-[8px] md:text-[10px] uppercase font-bold text-neutral-500 tracking-widest leading-tight">{specialAward.label}</div>
+                         <div className="text-base md:text-lg font-black text-white leading-none mt-1">{specialAward.text}</div>
                       </div>
                    </div>
                 )}
              </div>
 
-             <div className="grid grid-cols-2 gap-3 relative z-10 mt-auto">
-                <div className="bg-neutral-900/60 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                   <div className="text-3xl font-black text-white">{totalApps}/{squadStats.maxApps}</div>
-                   <div className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Matches</div>
+             <div className="grid grid-cols-2 gap-2 md:gap-3 relative z-10 mt-auto">
+                <div className="bg-neutral-900/60 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/10 backdrop-blur-sm">
+                   <div className="text-2xl md:text-3xl font-black text-white">{totalApps}/{squadStats.maxApps}</div>
+                   <div className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-neutral-500">Matches</div>
                 </div>
-                <div className="bg-neutral-900/60 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                   <div className="text-3xl font-black text-orange-500">{totalGoals}</div>
-                   <div className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Goals</div>
+                <div className="bg-neutral-900/60 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/10 backdrop-blur-sm">
+                   <div className="text-2xl md:text-3xl font-black text-orange-500">{totalGoals}</div>
+                   <div className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-neutral-500">Goals</div>
                 </div>
-                <div className="bg-neutral-900/60 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                   <div className="text-3xl font-black text-yellow-500">{mom}</div>
-                   <div className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">MoM</div>
+                <div className="bg-neutral-900/60 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/10 backdrop-blur-sm">
+                   <div className="text-2xl md:text-3xl font-black text-yellow-500">{mom}</div>
+                   <div className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-neutral-500">MoM</div>
                 </div>
-                <div className="bg-neutral-900/60 p-4 rounded-2xl border border-white/10 backdrop-blur-sm">
-                   <div className="text-3xl font-black text-white">{greenCards + yellowCards}</div>
-                   <div className="text-[10px] font-bold uppercase tracking-widest text-neutral-500">Cards</div>
+                <div className="bg-neutral-900/60 p-3 md:p-4 rounded-xl md:rounded-2xl border border-white/10 backdrop-blur-sm">
+                   <div className="text-2xl md:text-3xl font-black text-white">{greenCards + yellowCards}</div>
+                   <div className="text-[8px] md:text-[10px] font-bold uppercase tracking-widest text-neutral-500">Cards</div>
                 </div>
              </div>
           </div>
 
-          <div className="mt-8 flex gap-4 w-full max-w-sm relative z-10">
-             <button 
-                onClick={downloadCard}
-                className="flex-1 bg-white text-black py-4 px-6 rounded-xl font-bold flex items-center justify-center gap-2 hover:bg-neutral-200 transition-colors shadow-lg"
-             >
-                <Download className="w-5 h-5" /> Save Image
-             </button>
+          <div className="mt-8 flex gap-4 w-full max-w-sm relative z-10 shrink-0">
              <button 
                 onClick={(e) => { e.stopPropagation(); onClose(); }}
-                className="bg-neutral-800 text-white p-4 rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700"
+                className="w-full bg-neutral-800 text-white p-4 rounded-xl hover:bg-neutral-700 transition-colors border border-neutral-700 font-bold flex items-center justify-center gap-2"
              >
-                <RefreshCcw className="w-6 h-6" />
+                <RefreshCcw className="w-5 h-5" /> Play Again
              </button>
           </div>
         </div>
@@ -1412,7 +1407,7 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 bg-black flex items-center justify-center">
       <div 
-         className="w-full h-full md:h-[85vh] md:max-w-sm md:rounded-3xl overflow-hidden relative shadow-2xl bg-neutral-900 border-neutral-800 md:border cursor-pointer"
+         className="w-full h-[100dvh] md:h-[85vh] md:max-w-sm md:rounded-3xl overflow-hidden relative shadow-2xl bg-neutral-900 border-neutral-800 md:border cursor-pointer flex flex-col"
          onClick={handleTap}
       >
          <div className="absolute top-2 left-2 right-2 z-50 flex gap-1 h-1">
@@ -1435,9 +1430,9 @@ const WrappedView: React.FC<WrappedProps> = ({ player, onClose }) => {
                animate={{ x: 0 }}
                exit={{ x: direction > 0 ? '-100%' : '100%' }}
                transition={{ type: "spring", stiffness: 300, damping: 30 }}
-               className="absolute inset-0 z-0 bg-neutral-950"
+               className="absolute inset-0 z-0 bg-neutral-950 flex flex-col"
             >
-               <div className="w-full h-full [&_button]:cursor-pointer [&_button]:relative [&_button]:z-50">
+               <div className="w-full h-full flex-1 [&_button]:cursor-pointer [&_button]:relative [&_button]:z-50">
                   {slides[currentSlide].render()}
                </div>
             </motion.div>
@@ -1452,7 +1447,7 @@ const App: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(false);
 
   return (
-    <div className="bg-neutral-950 min-h-screen font-sans text-white overflow-hidden">
+    <div className="bg-neutral-950 min-h-[100dvh] font-sans text-white overflow-hidden">
        <BackgroundMusic isPlaying={isPlaying} togglePlay={() => setIsPlaying(!isPlaying)} />
        <AnimatePresence mode="wait">
           {!selectedPlayer ? (
